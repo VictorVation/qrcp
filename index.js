@@ -7,18 +7,28 @@ const http = require('http')
 const chalk = require('chalk')
 const qrcode = require('qrcode-terminal')
 
-const filename = process.argv[2]
-if (!filename) {
+function exitHelp() {
   console.log(`qrcp - Transfer files via QR code through the local network.
 Usage:
   qrcp <filename>`)
-  process.exit(0)
+  process.exit(1)
 }
 
-const stat = fs.statSync(filename)
+const filename = process.argv[2]
+if (!filename) {
+  exitHelp()
+}
+
+let stat
+try {
+  stat = fs.statSync(filename)
+} catch (err) {
+  exitHelp()
+}
+
 if (stat.isDirectory()) {
   console.log(`Skipping directory ${filename}.`)
-  process.exit()
+  process.exit(1)
 }
 
 const server = http
@@ -27,10 +37,8 @@ const server = http
       'Content-Length': stat.size,
       'Content-Disposition': 'attachment; filename=' + filename,
     })
-    fs
-      .createReadStream(filename)
-      .on('close', () => process.exit())
-      .pipe(res)
+    res.on('finish', () => process.exit())
+    fs.createReadStream(filename).pipe(res)
   })
   .listen()
 
