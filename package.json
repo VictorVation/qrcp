@@ -20,8 +20,5 @@
   },
   "engines": {
     "node": ">=8"
-  },
-  "scripts": {
-    "prettier": "prettier --write *.js"
   }
 }
