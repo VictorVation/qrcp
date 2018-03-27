@@ -2,8 +2,8 @@
   "name": "qrcp",
   "version": "0.0.1",
   "description": "Transfer files to your phone using the QR scanner",
-  "main": "index.js",
-  "bin": "index.js",
+  "main": "qrcp.js",
+  "bin": "qrcp.js",
   "author": "Victor Szeto <me@victorszeto.com> (https://victorszeto.com)",
   "license": "MIT",
   "keywords": [
@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "chalk": "^2.3.2",
+    "commander": "^2.15.1",
     "qrcode-terminal": "^0.12.0"
   },
   "engines": {

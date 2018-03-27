@@ -4,26 +4,31 @@ const fs = require('fs')
 const os = require('os')
 const http = require('http')
 
+const version = require('./package.json')['version']
 const chalk = require('chalk')
+const program = require('commander')
 const qrcode = require('qrcode-terminal')
 
-function exitHelp() {
-  console.log(`qrcp - Transfer files via QR code through the local network.
-Usage:
-  qrcp <filename>`)
-  process.exit(1)
-}
+program
+  .version(version)
+  .option(
+    '-f, --forever',
+    "Don't stop server after file is downloaded. Useful for transferring the same file to multiple destinations.",
+  )
+  .parse(process.argv)
 
-const filename = process.argv[2]
+const [filename, ...args] = program.args
 if (!filename) {
-  exitHelp()
+  program.outputHelp()
+  process.exit(1)
 }
 
 let stat
 try {
   stat = fs.statSync(filename)
 } catch (err) {
-  exitHelp()
+  program.outputHelp()
+  process.exit(1)
 }
 
 if (stat.isDirectory()) {
@@ -37,7 +42,9 @@ const server = http
       'Content-Length': stat.size,
       'Content-Disposition': 'attachment; filename=' + filename,
     })
-    res.on('finish', () => process.exit())
+    if (!program.forever) {
+      res.on('finish', () => process.exit())
+    }
     fs.createReadStream(filename).pipe(res)
   })
   .listen()
