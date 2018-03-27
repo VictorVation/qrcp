@@ -1,6 +1,6 @@
 {
   "name": "qrcp",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Transfer files to your phone using the QR scanner",
   "main": "qrcp.js",
   "bin": "qrcp.js",
